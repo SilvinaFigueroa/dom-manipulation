@@ -64,10 +64,11 @@ subMenuEl.style.height = "100%";
 subMenuEl.style.backgroundColor = "var(--sub-menu-bg)"
 
 subMenuEl.classList.add('flex-around');
-// subMenuEl.style.position = ('absolute');
+subMenuEl.style.position = ('absolute');
 subMenuEl.style.top = ('0');
 
 // Part 4: Adding Menu Interaction
+
 
 topMenuEl.addEventListener("click", (e) => {
   e.preventDefault();
@@ -78,8 +79,14 @@ topMenuEl.addEventListener("click", (e) => {
     const menuLinks = topMenuEl.querySelectorAll('a'); 
     // remove active class from the links
     menuLinks.forEach(link => link.classList.remove('active'));
+
     // add active class to the link clicked (target)
     e.target.classList.toggle('active')
+    
+    if(e.target.subLinks){
+      subMenuEl.style.top = "100%";}
+      let linkObj = e.target;
+      buildSubmenu(menuLinks.subLinks,linkObj)
   }
   return;
 });
@@ -90,16 +97,16 @@ for (const item of menuLinks) {
   uplink.textContent = item.text
   uplink.setAttribute("href", item.href)
   topMenuEl.append(uplink)
-  // create a subgroup with the sublinks and append it to submenu
-  let subGroup = document.createElement('div');
-  if (item.subLinks) {
-    for (const sLink of item.subLinks) {
-      let link = document.createElement("a")
-      link.textContent = sLink.text
-      link.setAttribute("href", sLink.href)
-      subGroup.append(link)
-    }
-  }
-  subMenuEl.appendChild(subGroup)
+}
+
+function buildSubmenu(sublinks){
+  // clear submenu content  
+  subMenuEl.innerHTML = '';
+      for (const each of sublinks) {
+        let link = document.createElement("a")
+        link.textContent = each.text
+        link.setAttribute("href", each.href)
+        subMenuEl.appendChild(link)
+      }
 }
 
