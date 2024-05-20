@@ -74,19 +74,37 @@ topMenuEl.addEventListener("click", (e) => {
   e.preventDefault();
   // if (e.target.tagName === "A") { // I was using the comparison with "a" and it didn't work.
   // I found that all the tagName are in UPPERCASE. After researching, it seems it's better to compare witg HTML instance of
-    if(e.target instanceof HTMLAnchorElement){
+  if (e.target instanceof HTMLAnchorElement) {
     //Get all the <a> elements on top menu
-    const menuLinks = topMenuEl.querySelectorAll('a'); 
+    const topLinks = topMenuEl.querySelectorAll('a');
     // remove active class from the links
-    menuLinks.forEach(link => link.classList.remove('active'));
+    topLinks.forEach(link => link.classList.remove('active'));
 
     // add active class to the link clicked (target)
     e.target.classList.toggle('active')
-    
-    if(e.target.subLinks){
-      subMenuEl.style.top = "100%";}
-      let linkObj = e.target;
-      buildSubmenu(menuLinks.subLinks,linkObj)
+
+
+
+    let clickedLink = e.target.textContent;
+
+    let menuIndex = -1;
+    let menuObj = null
+    for (const index in menuLinks) {
+      if (menuLinks[index].text === clickedLink) {
+        menuIndex = index;
+        menuObj = menuLinks[index];
+        break;
+      }
+    }
+    if (menuObj && (menuObj.subLinks)) {
+      subMenuEl.style.top = "100%";
+      buildSubmenu(menuObj.subLinks)
+    }
+    else{
+      subMenuEl.style.top = "0"
+      subMenuEl.innerHTML = ''
+    }
+
   }
   return;
 });
@@ -99,14 +117,16 @@ for (const item of menuLinks) {
   topMenuEl.append(uplink)
 }
 
-function buildSubmenu(sublinks){
+function buildSubmenu(links) {
   // clear submenu content  
   subMenuEl.innerHTML = '';
-      for (const each of sublinks) {
-        let link = document.createElement("a")
-        link.textContent = each.text
-        link.setAttribute("href", each.href)
-        subMenuEl.appendChild(link)
-      }
+
+  for (const item of links) {
+    let link = document.createElement("a")
+    link.textContent = item.text
+    link.setAttribute("href", item.href)
+    subMenuEl.appendChild(link)
+  }
 }
+
 
