@@ -1,12 +1,12 @@
 // Part 1: Getting Started
 
 //Select and cache the <main> element in a variable named mainEl.
-let mainEl = document.getElementsByTagName('main')
+let mainEl = document.getElementsByTagName('main')[0]
 
 // Get element(s) retrieve an array of elements, so ve need to refer to the first element using [0]
-mainEl[0].style.backgroundColor = "var(--main-bg)";
+mainEl.style.backgroundColor = "var(--main-bg)";
 
-mainEl[0].innerHTML = "<h1>DOM Manipulation</h1>"
+mainEl.innerHTML = "<h1>DOM Manipulation</h1>"
 
 // Another option to include the text on the mainEl
 // let head = document.createElement("h1")
@@ -14,7 +14,7 @@ mainEl[0].innerHTML = "<h1>DOM Manipulation</h1>"
 // mainEl[0].appendChild(head)
 
 
-mainEl[0].classList.add('flex-ctr')
+mainEl.classList.add('flex-ctr')
 
 
 // Part 2: Creating a Menu Bar
@@ -83,31 +83,53 @@ topMenuEl.addEventListener("click", (e) => {
     // add active class to the link clicked (target)
     e.target.classList.toggle('active')
 
-
-
     let clickedLink = e.target.textContent;
 
-    let menuIndex = -1;
+    // Find the text of the link clicked (event target) on the array obj of menuLinks
     let menuObj = null
     for (const index in menuLinks) {
       if (menuLinks[index].text === clickedLink) {
-        menuIndex = index;
+        // if found, we cache the variable to use it on the buildSubmenu function
         menuObj = menuLinks[index];
+        // we use break because we don't need to continue looping after we found the link (unique values)
         break;
       }
     }
+    //If the menu link was found and it has sublinks
     if (menuObj && (menuObj.subLinks)) {
+      //Show menu
       subMenuEl.style.top = "100%";
+      // Create submenu
       buildSubmenu(menuObj.subLinks)
     }
-    else{
+    else {
       subMenuEl.style.top = "0"
       subMenuEl.innerHTML = ''
     }
-
   }
-  return;
 });
+
+subMenuEl.addEventListener("click", (e) => {
+  e.preventDefault();
+  // If the target is not an <a>
+  if (!(e.target instanceof HTMLAnchorElement)) {
+    return
+  }
+
+    console.log(`Link clicked sub menu ${e.target}`)
+    subMenuEl.style.top = "0"
+    // find the <a> on top links and remove the active state
+    const topLinks = topMenuEl.querySelectorAll('a');
+    topLinks.forEach(link => link.classList.remove('active'))
+    console.log(`Text clicked sub menu ${e.target.text}`)
+    // new content of the mainEl should be set to the name of the <a> clicked on submenu
+    let newContent = (e.target.text).toUpperCase();
+
+    mainEl.innerHTML = `<h1>${newContent}</h1>`
+
+});
+
+
 
 for (const item of menuLinks) {
   // for each top menu
