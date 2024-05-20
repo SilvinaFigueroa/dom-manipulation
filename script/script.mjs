@@ -3,8 +3,8 @@
 //Select and cache the <main> element in a variable named mainEl.
 let mainEl = document.getElementsByTagName('main')
 
-// Get elements retrieve an array of elements, so ve need to refer to the first element using [0]
-mainEl[0].style.backgroundColor = "var(--main-bg)"; 
+// Get element(s) retrieve an array of elements, so ve need to refer to the first element using [0]
+mainEl[0].style.backgroundColor = "var(--main-bg)";
 
 mainEl[0].innerHTML = "<h1>DOM Manipulation</h1>"
 
@@ -32,23 +32,74 @@ topMenuEl.classList.add('flex-around')
 
 
 var menuLinks = [
-    { text: 'about', href: '/about' },
-    { text: 'catalog', href: '/catalog' },
-    { text: 'orders', href: '/orders' },
-    { text: 'account', href: '/account' },
-  ];
+  { text: 'about', href: '/about' },
+  {
+    text: 'catalog', href: '#', subLinks: [
+      { text: 'all', href: '/catalog/all' },
+      { text: 'top selling', href: '/catalog/top' },
+      { text: 'search', href: '/catalog/search' },
+    ]
+  },
+  {
+    text: 'orders', href: '#', subLinks: [
+      { text: 'new', href: '/orders/new' },
+      { text: 'pending', href: '/orders/pending' },
+      { text: 'history', href: '/orders/history' },
+    ]
+  },
+  {
+    text: 'account', href: '#', subLinks: [
+      { text: 'profile', href: '/account/profile' },
+      { text: 'sign out', href: '/account/signout' },
+    ]
+  },
+];
 
 
-for (const menu in menuLinks){
-    let link = document.createElement("a")
-    link.setAttribute("href",menuLinks[menu].href)
+// DOM Manipulation (Part Two)
+// Part 3: Creating the Submenu
 
-    link.textContent = (menuLinks[menu].text)
+let subMenuEl = document.getElementById("sub-menu")
+subMenuEl.style.height = "100%";
+subMenuEl.style.backgroundColor = "var(--sub-menu-bg)"
 
-    topMenuEl.append(link)
+subMenuEl.classList.add('flex-around');
+// subMenuEl.style.position = ('absolute');
+subMenuEl.style.top = ('0');
+
+// Part 4: Adding Menu Interaction
+
+topMenuEl.addEventListener("click", (e) => {
+  e.preventDefault();
+  // if (e.target.tagName === "A") { // I was using the comparison with "a" and it didn't work.
+  // I found that all the tagName are in UPPERCASE. After researching, it seems it's better to compare witg HTML instance of
+    if(e.target instanceof HTMLAnchorElement){
+    //Get all the <a> elements on top menu
+    const menuLinks = topMenuEl.querySelectorAll('a'); 
+    // remove active class from the links
+    menuLinks.forEach(link => link.classList.remove('active'));
+    // add active class to the link clicked (target)
+    e.target.classList.toggle('active')
+  }
+  return;
+});
+
+for (const item of menuLinks) {
+  // for each top menu
+  let uplink = document.createElement("a")
+  uplink.textContent = item.text
+  uplink.setAttribute("href", item.href)
+  topMenuEl.append(uplink)
+  // create a subgroup with the sublinks and append it to submenu
+  let subGroup = document.createElement('div');
+  if (item.subLinks) {
+    for (const sLink of item.subLinks) {
+      let link = document.createElement("a")
+      link.textContent = sLink.text
+      link.setAttribute("href", sLink.href)
+      subGroup.append(link)
+    }
+  }
+  subMenuEl.appendChild(subGroup)
 }
-
-
-// Part 4: Adding Interactivity
-
 
